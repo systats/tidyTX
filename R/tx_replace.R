@@ -90,7 +90,9 @@ tx_replace_punc <- function(x){
     stringr::str_replace_all("\\.|\\:|\\;", " PUNC_DOT ") %>%
     stringr::str_replace_all("\\!", " PUNC_EXCL ") %>%
     stringr::str_replace_all("\\?", " PUNC_QUES ") %>%
-    stringr::str_replace_all("\\.\\.\\.|…", " PUNC_DOTS ")
+    stringr::str_replace_all("\\.\\.\\.|…", " PUNC_DOTS ") %>%
+    stringr::str_replace_all("^[\\w+]$", " ")
+
   return(out)
 }
 
@@ -129,5 +131,23 @@ tx_replace_currency <- function(x){
     str_replace_all("\\€", " EUR ") %>%
     str_replace_all("\\¥", " JPY ") %>%
     str_replace_all("\\£", " GBP ")
+  return(out)
+}
+
+
+#' tx_replace_str
+#'
+#' @param x A string vector
+#' @return `\n` `\t` replaced as well as to_lower in \code{x}
+#'
+#' @examples
+#' "Oh my god \n the product costs \t ..." %>%
+#'    tx_replace_str()
+#' @export
+
+tx_replace_str <- function(x){
+  out <- x %>%
+    str_replace_all("\n|\t", " ") %>%
+    str_replace_all("\\s+", " ")
   return(out)
 }

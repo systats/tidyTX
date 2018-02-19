@@ -3,6 +3,7 @@
 export(tx_replace_currency)
 export(tx_replace_emoji)
 export(tx_replace_punc)
+export(tx_replace_str)
 export(tx_replace_twitter)
 export(tx_replace_url)
 export(tx_spacing)
