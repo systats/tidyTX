@@ -94,7 +94,6 @@ tx_replace_punc <- function(x){
   return(out)
 }
 
-
 #' tx_spacing
 #'
 #' @param x A string vector
@@ -111,5 +110,24 @@ tx_spacing <- function(x){
     stringr::str_replace_all("\\s+", " ") %>%
     stringr::str_trim() %>%
     stringr::str_to_lower()
+  return(out)
+}
+
+#' tx_replace_currency
+#'
+#' @param x A string vector
+#' @return currency symbols replaced in \code{x}
+#'
+#' @examples
+#' "Oh my god? the product costs ¥30, £11, €10, $5 ..." %>%
+#'    tx_replace_currency()
+#' @export
+
+tx_replace_currency <- function(x){
+  out <- x %>%
+    str_replace_all("\\$", " USD ") %>%
+    str_replace_all("\\€", " EUR ") %>%
+    str_replace_all("\\¥", " JPY ") %>%
+    str_replace_all("\\£", " GBP ")
   return(out)
 }
