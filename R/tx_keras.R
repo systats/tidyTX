@@ -19,7 +19,7 @@ tx_text_to_seq <- function(token_fun, string, maxlen){
 #'
 #' @export
 tx_onehot <- function(x){
-  return(dummies::dummy(dat$valid$party_id) %>% as.matrix())
+  return(dummies::dummy(x) %>% as.matrix())
 }
 
 
