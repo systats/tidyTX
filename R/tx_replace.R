@@ -91,8 +91,8 @@ tx_replace_punc <- function(x){
     stringr::str_replace_all("\\!", " PUNC_EXCL ") %>%
     stringr::str_replace_all("\\?", " PUNC_QUES ") %>%
     stringr::str_replace_all("\\.\\.\\.|…", " PUNC_DOTS ") %>%
-    stringr::str_replace_all("[[:punct:]]", " ")# %>%
-    #stringr::str_replace_all("[[:alpha:]]", " ")
+    stringr::str_replace_all("[[:punct:]]^[_]", " ")# %>%
+    #stringr::str_replace_all("[[:...:]]", " ")
 
   return(out)
 }
