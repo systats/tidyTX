@@ -91,7 +91,8 @@ tx_replace_punc <- function(x){
     stringr::str_replace_all("\\!", " PUNC_EXCL ") %>%
     stringr::str_replace_all("\\?", " PUNC_QUES ") %>%
     stringr::str_replace_all("\\.\\.\\.|…", " PUNC_DOTS ") %>%
-    stringr::str_replace_all("^[\\w+]$", " ")
+    stringr::str_replace_all("[[:punct:]]", " ") %>%
+    stringr::str_replace_all("[[:alpha:]]", " ")
 
   return(out)
 }
@@ -150,4 +151,44 @@ tx_replace_str <- function(x){
     str_replace_all("\n|\t", " ") %>%
     str_replace_all("\\s+", " ")
   return(out)
+}
+
+#' tx_n_tokens
+#'
+#' @param x A string vector
+#' @return counts tokens of string\code{x}
+#'
+#' @examples
+#' "Oh my god? #RealDonaldTrump is a moron!" %>%
+#'    tx_n_tokens()
+#' @export
+tx_n_tokens <- function(string, token = "word"){
+
+  if(token == "word"){
+    n_tokens <- str_count(string, "\\W+")
+  } else if(token == "char"){
+    n_tokens <- nchar(string)
+  } else if(token == "space"){
+    pattern <- "\\S+"
+    pattern <- "[[:alpha:]]+"
+    n_tokens <- str_count(string, pattern)
+  }
+
+  return(n_tokens)
+}
+
+
+#' tx_party_de
+#'
+#' @param x a ggplot2 plot
+#' @return a color palette\code{x}
+#'
+#' @examples
+#' "Oh my god? #RealDonaldTrump is a moron!" %>%
+#'    tx_n_tokens()
+#' @export
+tx_party_de <- function(x, ...) {
+  x + ggplot2::scale_fill_manual(...,
+        values = c("#46962b", "#8B1A1A", "#E2001A", "#ffed00", "black")
+      )
 }
