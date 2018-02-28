@@ -6,7 +6,7 @@
 #' @export
 tx_text_to_seq <- function(token_fun, string, maxlen){
   text_seq <- token_fun %>%
-    texts_to_sequences(., array(string, 1)) %>%
+    texts_to_sequences(., string) %>%
     keras::pad_sequences(., maxlen = maxlen, value = 0)
   return(text_seq)
 }
