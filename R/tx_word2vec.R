@@ -10,6 +10,5 @@ tx_get_dtm <- function(text, id, vec){
   dtm <- text %>%
     itoken(ids = id, progressbar = FALSE) %>%
     create_dtm(vec)
-
   return(dtm)
 }
