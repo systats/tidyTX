@@ -4,7 +4,7 @@
 \alias{tx_keras_predict}
 \title{tx_keras_predict}
 \usage{
-tx_keras_predict(seq, model, index = 1)
+tx_keras_predict(model, seq, index = 1)
 }
 \arguments{
 \item{model}{a pretrained keras model}
@@ -14,7 +14,7 @@ tx_keras_predict(seq, model, index = 1)
 \item{data}{a list of data objects}
 }
 \value{
-a target vector \code{x}
+a target vector
 }
 \description{
 tx_keras_predict
