@@ -126,29 +126,28 @@ tx_keras_plot <- function(history) {
 
 #' tx_confusion
 #' @export
-tx_confusion <- function(preds, real, lib = "hchart", ...){
-  mat <- table(preds, real) %>%
-    as.data.frame()
-  colnames(mat) <- c("preds", "real", "n")
-  mat <- mat %>%
-    tidyr::spread(key = "real", value = "n") %>%
-    dplyr::select(-preds) %>%
-    as.matrix()
+tx_confusion <- function(x, y, lib = "hchart", ...){
 
-  if(lib == "gg"){
-    mat <- table(preds, test$party_id) %>%
-      as.data.frame
-    colnames(mat) <- c("preds", "real", "n")
-    gg <- mat %>%
-      ggplot(aes(real, preds, fill = n, label = n)) +
-      geom_tile() +
-      geom_text()
-  } else if(lib == "hc"){
-    gg <- highcharter::hchart(mat, type = "heatmap", ...)
+  if (lib == "gg") {
+    gg <- data.frame(preds = x, real = y) %>%
+      dplyr::count(preds, real) %>%
+      ggplot2::ggplot(ggplot2::aes(real, preds, fill = Freq, label = n)) +
+      ggplot2::geom_tile() +
+      ggplot2::geom_text() +
+      viridis::scale_fill_viridis(direction = -1)
+  } else if (lib == "hchart") {
+    gg <- data.frame(preds = x, real = y) %>%
+      dplyr::count(preds, real) %>%
+      tidyr::spread(key = "real", value = "n") %>%
+      as.matrix() %>%
+      highcharter::hchart(mat, type = "heatmap", ...)
   } else {
-    gg <- d3heatmap::d3heatmap(mat, colors = "Spectral", ...)
+    gg <- data.frame(preds = x, real = y) %>%
+      dplyr::count(preds, real) %>%
+      tidyr::spread(key = "real", value = "n") %>%
+      as.matrix() %>%
+      d3heatmap::d3heatmap(mat, colors = "Spectral", ...)
   }
-
   return(gg)
 }
 
