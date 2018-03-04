@@ -128,25 +128,30 @@ tx_keras_plot <- function(history) {
 #' @export
 tx_confusion <- function(preds, real, lib = "hchart", ...){
   mat <- table(preds, real) %>%
-    as.data.frame %>%
-    spread(key = "real", value = "Freq") %>%
-    #select(-preds) %>%
+    as.data.frame()
+  colnames(mat) <- c("preds", "real", "n")
+  mat <- mat %>%
+    tidyr::spread(key = "real", value = "n") %>%
+    dplyr::select(-preds) %>%
     as.matrix()
 
   if(lib == "gg"){
-    gg <- table(preds, real) %>%
-      as.data.frame %>%
-      ggplot(mat, aes(real, preds, fill = Freq, label = Freq)) +
+    mat <- table(preds, test$party_id) %>%
+      as.data.frame
+    colnames(mat) <- c("preds", "real", "n")
+    gg <- mat %>%
+      ggplot(aes(real, preds, fill = n, label = n)) +
       geom_tile() +
       geom_text()
-  } else if(lib == "hchart"){
+  } else if(lib == "hc"){
     gg <- highcharter::hchart(mat, type = "heatmap", ...)
   } else {
-    gg <- d3heatmap::d3heatmap(mat, colors = "Spectral")
+    gg <- d3heatmap::d3heatmap(mat, colors = "Spectral", ...)
   }
 
   return(gg)
 }
+
 
 #' tx_gg_pred
 #'
