@@ -131,7 +131,7 @@ tx_confusion <- function(x, y, lib = "hchart", ...){
   if (lib == "gg") {
     gg <- data.frame(preds = x, real = y) %>%
       dplyr::count(preds, real) %>%
-      ggplot2::ggplot(ggplot2::aes(real, preds, fill = Freq, label = n)) +
+      ggplot2::ggplot(ggplot2::aes(real, preds, fill = n, label = n)) +
       ggplot2::geom_tile() +
       ggplot2::geom_text() +
       viridis::scale_fill_viridis(direction = -1)
