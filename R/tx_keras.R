@@ -44,7 +44,7 @@ tx_keras_predict <- function(model, seq, index = 1){
 #' @return a \code{x}
 #'
 #' @export
-tx_keras_predict_one <- function(string, token_fun, model){
+tx_keras_predict_one <- function(model, string, token_fun, maxlen){
   new_seq <- token_fun %>%
     texts_to_sequences(., array(string, 1)) %>%
     pad_sequences(., maxlen = maxlen, value = 0)
@@ -63,10 +63,10 @@ tx_keras_predict_one <- function(string, token_fun, model){
 #' @return data frame of predictions \code{x}
 #'
 #' @export
-tx_keras_predict_str <- function(string, str){
+tx_keras_predict_str <- function(string, str, maxlen){
   new_list <- list()
   for(jj in seq_along(str)){
-    new_list[[jj]] <- tidyTX::tx_keras_predict_one(string, token_fun = str[[jj]][[2]] , model = str[[jj]][[3]]) %>% mutate(model = str[[jj]]$id)
+    new_list[[jj]] <- tidyTX::tx_keras_predict_one(model = str[[jj]][[3]], string = string, token_fun = str[[jj]][[2]], maxlen = maxlen) %>% mutate(model = str[[jj]]$id)
   }
   dat <- purrr::reduce(new_list, rbind)
   return(dat)
