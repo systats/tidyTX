@@ -4,7 +4,7 @@
 \alias{tx_map_dict}
 \title{tx_map_dict}
 \usage{
-tx_map_dict(string, dict, iter_by = "for", key1 = 1, key2 = 2)
+tx_map_dict(string, dict = json, iter_by = "for", key1 = 0, key2 = 1)
 }
 \arguments{
 \item{x}{A string vector}

@@ -4,7 +4,7 @@
 \alias{tx_keras_predict_str}
 \title{tx_keras_predict_str}
 \usage{
-tx_keras_predict_str(string, str)
+tx_keras_predict_str(string, str, maxlen)
 }
 \arguments{
 \item{string}{a one element string}

@@ -4,14 +4,14 @@
 \alias{tx_keras_predict_one}
 \title{tx_keras_predict_one}
 \usage{
-tx_keras_predict_one(string, token_fun, model)
+tx_keras_predict_one(model, string, token_fun, maxlen)
 }
 \arguments{
+\item{model}{a pre-trained model}
+
 \item{string}{a one element string}
 
 \item{token_fun}{a pre-constructed tokenizer}
-
-\item{model}{a pre-trained model}
 }
 \value{
 a \code{x}

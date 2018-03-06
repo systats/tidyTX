@@ -4,7 +4,8 @@
 \alias{tx_confusion}
 \title{tx_confusion}
 \usage{
-tx_confusion(preds, real, lib = "hchart", ...)
+tx_confusion(x, y, lib = "hchart", text_resize = F, info = F,
+  info_list = F, ...)
 }
 \description{
 tx_confusion
