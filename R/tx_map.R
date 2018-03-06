@@ -42,15 +42,6 @@ tx_map_dict <- function (string, dict = json, iter_by = "for", key1 = 0, key2 = 
   return(string)
 }
 
-# test <- c("Hello Simon Roth. welcome to mapping a dictionary onto a character string.", "Well if it is successful, this part should by replaced.")
-#
-# dict <- list(
-#   "Simon Roth" = c("Simon Roth", "PERSON"),
-#   "this part" = c("this part", "PEEEP")
-# )
-#
-# tx_map_dict(test, dict, iter_by = "for")
-
 #' tx_discard_tokens
 #' @export
 tx_discard_tokens <- function(data, text, dict, purrr = T){
@@ -62,7 +53,7 @@ tx_discard_tokens <- function(data, text, dict, purrr = T){
       purrr::map(.f = ~ dplyr::anti_join(.x, dict, by = "words")) %>%
       purrr::map_chr(.f = ~ paste(.x$words, collapse = " "))
 
-    new <- data %>%
+    data %>%
       dplyr::mutate(ctext = string)
 
     # data %>%
