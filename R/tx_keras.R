@@ -126,126 +126,112 @@ tx_keras_plot <- function(history) {
 
 #' tx_confusion
 #' @export
-tx_confusion <- function (x, y, lib = "hchart", text_resize = F, info = F, info_list = F, extra_info = F,
-                          ...)
-{
-  mat <- data.frame(preds = x, real = y) %>% dplyr::count(preds,
-                                                          real) %>% tidyr::spread(key = "real", value = "n") %>%
-    select(-preds) %>% as.matrix()
-  n <- sum(mat)
-  n_class <- nrow(mat)
-  diag <- diag(mat)
-  rowsums <- apply(mat, 1, sum)
-  colsums <- apply(mat, 2, sum)
-  p <- rowsums/n
-  q <- colsums/n
-  acc <- round(sum(diag)/n, 3)
-  precision <- diag/colsums
-  recall <- diag/rowsums
-  f1 <- 2 * precision * recall/(precision + recall)
-  eval <- data.frame(level = 1:length(precision), precision,
-                     recall, f1)
+tx_confusion <- function(x, y, lib = "hchart", text_resize = F, info = F, info_list = F, ... ){
+
+  mat <- data.frame(preds = x, real = y) %>%
+    dplyr::count(preds, real) %>%
+    tidyr::spread(key = "real", value = "n") %>%
+    select(-preds) %>%
+    as.matrix()
+
+  ### prep matrix
+  n <- sum(mat) # number of instances
+  n_class <- nrow(mat) # number of classes
+  diag <- diag(mat) # number of correctly classified instances per class
+  rowsums <- apply(mat, 1, sum) # number of instances per class
+  colsums <- apply(mat, 2, sum) # number of predictions per class
+  p <- rowsums / n # distribution of instances over the actual classes
+  q <- colsums / n # distribution of instances over the predicted classes
+
+  ### custome error metrics
+  # overall classification accuracy (% correctly classified)
+  acc <- round(sum(diag) / n, 3)
+  # per class
+  precision <- diag / colsums
+  recall <- diag / rowsums
+  f1 <- 2 * precision * recall / (precision + recall) # harmonic mean (or a weighted average) of precision and recall
+  eval <- data.frame(level = 1:length(precision), precision, recall, f1)
+
   if (lib == "gg") {
-    gg <- data.frame(preds = x, real = y) %>% dplyr::count(preds,
-                                                           real) %>% dplyr::group_by(real) %>% dplyr::mutate(n_real = sum(n)) %>%
-      ungroup() %>% dplyr::mutate(perc_real = round(n/n_real *
-                                                      100, 1)) %>% dplyr::mutate(label = paste0(n, "\n",
-                                                                                                perc_real, "%")) %>% mutate(preds = factor(preds,
-                                                                                                                                           levels = sort(unique(preds), decreasing = T))) %>%
-      mutate(real = factor(real)) %>% ggplot2::ggplot(ggplot2::aes(real,
-                                                                   preds, fill = n)) + ggplot2::geom_tile(alpha = 0.8) +
-      viridis::scale_fill_viridis(direction = -1) + scale_x_discrete(position = "top") +
-      ggthemes::theme_few() + theme(legend.position = "none") +
-      coord_equal() + labs(x = "Real value y", y = "Predicted value y hat")
-    if (text_resize) {
-      gg <- gg + ggplot2::geom_text(aes(label = label,
-                                        size = n))
-    }
-    else {
+    gg <- data.frame(preds = x, real = y) %>%
+      dplyr::count(preds, real) %>%
+      dplyr::group_by(real) %>%
+      dplyr::mutate(n_real = sum(n)) %>%
+      ungroup() %>%
+      dplyr::mutate(perc_real = round(n/n_real*100, 1)) %>%
+      dplyr::mutate(label = paste0(n, "\n", perc_real, "%")) %>%
+      mutate(preds = factor(preds, levels = sort(unique(preds), decreasing = T))) %>%
+      mutate(real = factor(real)) %>%
+      ggplot2::ggplot(ggplot2::aes(real, preds, fill = n)) +
+      ggplot2::geom_tile(alpha = .8) +
+      viridis::scale_fill_viridis(direction = -1) +
+      scale_x_discrete(position = "top") +
+      ggthemes::theme_few() +
+      theme(legend.position = "none") +
+      coord_equal() +
+      labs(x = "Real value y", y = "Predicted value y hat")
+
+    if(text_resize){
+      gg <- gg + ggplot2::geom_text(aes(label = label, size = n))
+    } else {
       gg <- gg + ggplot2::geom_text(aes(label = label))
     }
-    if (info) {
-      gg_info <- eval %>% dplyr::mutate_all(function(x) round(x,
-                                                              3)) %>% tidyr::gather("metric", "value", -level) %>%
+
+    if(info){
+      gg_info <- eval %>%
+        dplyr::mutate_all(function(x) round(x, 3)) %>%
+        tidyr::gather("metric", "value", -level) %>%
         dplyr::mutate(level = as.factor(level)) %>%
         ggplot2::ggplot(aes(level, value, fill = level)) +
-        ggplot2::geom_bar(stat = "identity", alpha = 0.7) +
-        ggplot2::facet_wrap(~metric, ncol = 2) + ggthemes::theme_few() +
-        ggplot2::labs(x = "", y = "", caption = paste0("Accuracy: ",
-                                                       acc)) + ggplot2::theme(legend.position = "none")
-      if (!info_list) {
-        scale_fill_party <- function() {
+        ggplot2::geom_bar(stat = "identity", alpha = .7) +
+        ggplot2::facet_wrap(~ metric, ncol = 2) +
+        ggthemes::theme_few() +
+        ggplot2::labs(x = "", y = "", caption = paste0("Accuracy: ", acc)) +
+        ggplot2::theme(legend.position = "none")
+
+      if(!info_list){
+        scale_fill_party <- function(){
           ggplot2::scale_fill_manual("", values = c("#46962b",
                                                     "#8B1A1A", "#E2001A", "#ffed00", "black"))
         }
-        gg_grid <- gridExtra::grid.arrange(gg, gg_info +
-                                             scale_fill_party(), ncol = 2)
+        gg_grid <- gridExtra::grid.arrange(
+          gg,
+          gg_info + scale_fill_party(),
+          ncol = 2
+        )
         return(gg_grid)
-      }
-      else {
+      } else {
+        # as list for customizing
         return(list(gg, gg_info))
       }
     }
-    if(extra_info){
-      dt <- data.frame(preds = x, real = y)
-      mat <- caret::confusionMatrix(dt$preds, dt$real)
 
-      acc_label <- grid::grobTree(
-        grid::textGrob(paste0("Accuracy: ", acc),
-                       x=0,  y=.88, hjust=0,
-                       gp=grid::gpar(col="blue", fontsize=10, fontface="italic")
-        )
-      )
-      tt3 <- ttheme_minimal(
-        core=list(fg_params=list(fontsize = 9)),
-        colhead=list(fg_params=list(fontsize = 9)))
-
-
-      per_class <- mat$byClass %>%
-        as.tibble() %>%
-        dplyr::mutate_all(function(x) round(x, 2)) %>%
-        as.matrix %>% t %>%
-        as.data.frame() %>%
-        rownames_to_column(var = " ") %>%
-        as.tibble() %>%
-        purrr::set_names(nm = c("", paste0("C", 1:nrow(mat$byClass)))) %>%
-        gridExtra::tableGrob(rows = NULL, theme = tt3)
-
-      gg2 <- ggplot2::ggplot() +
-        ggplot2::annotation_custom(acc_label) +
-        ggplot2::annotation_custom(per_class) +
-        #ggplot2::coord_equal() +
-        ggthemes::theme_hc()+
-        theme(text = element_text(size=3))
-
-      #gg <- tx_confusion(x = preds_glove, y = test$party_id, lib = "gg")
-      return(gridExtra::grid.arrange(gg, gg2, ncol = 2))
-    }
-  }
-  else if (lib == "plotly") {
+  } else if(lib == "plotly") {
     gg <- data.frame(preds = x, real = y) %>%
-      dplyr::count(preds,real) %>%
+      dplyr::count(preds, real) %>%
       dplyr::group_by(real) %>%
       dplyr::mutate(n_real = sum(n)) %>%
       dplyr::ungroup() %>%
-      dplyr::mutate(perc_real = round(n/n_real * 100, 1)) %>%
+      dplyr::mutate(perc_real = round(n/n_real*100, 1)) %>%
       dplyr::mutate(label = paste0(n, "\n", perc_real, "%")) %>%
       dplyr::mutate(preds = factor(preds, levels = sort(unique(preds), decreasing = T))) %>%
       dplyr::mutate(real = factor(real)) %>%
       ggplot2::ggplot(ggplot2::aes(real, preds, fill = n, text = paste("percent:", perc_real))) +
-      ggplot2::geom_tile() + viridis::scale_fill_viridis(direction = -1) +
-      ggplot2::scale_x_discrete(position = "top") + ggthemes::theme_few() +
-      ggplot2::theme(legend.position = "none") + ggplot2::labs(x = "Real value y",
-                                                               y = "Predicted value y hat")
+      ggplot2::geom_tile() +
+      viridis::scale_fill_viridis(direction = -1) +
+      ggplot2::scale_x_discrete(position = "top") +
+      ggthemes::theme_few() +
+      ggplot2::theme(legend.position = "none") +
+      ggplot2::labs(x = "Real value y", y = "Predicted value y hat")
+
     gg <- plotly::ggplotly(gg)
-  }
-  else if (lib == "hchart") {
-    gg <- mat %>% highcharter::hchart(mat, type = "heatmap",
-                                      ...)
-  }
-  else {
-    gg <- mat %>% d3heatmap::d3heatmap(mat, colors = "Spectral",
-                                       ...)
+
+  } else if (lib == "hchart") {
+    gg <- mat %>%
+      highcharter::hchart(mat, type = "heatmap", ...)
+  } else {
+    gg <- mat %>%
+      d3heatmap::d3heatmap(mat, colors = "Spectral", ...)
   }
   return(gg)
 }
