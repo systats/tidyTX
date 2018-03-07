@@ -121,7 +121,7 @@ tx_keras_plot <- function(history) {
     ggplot2::geom_point() +
     ggplot2::geom_line() +
     ggplot2::scale_alpha_discrete(range = c(.3, .7)) +
-    ggplot2::facet_wrap(~kind, ncol = 1)
+    ggplot2::facet_wrap(~kind, ncol = 1, scales = "free_y")
 }
 
 #' tx_confusion
