@@ -5,7 +5,7 @@
 \title{tx_confusion}
 \usage{
 tx_confusion(x, y, lib = "hchart", text_resize = F, info = F,
-  info_list = F, extra_info = F, ...)
+  info_list = F, ...)
 }
 \description{
 tx_confusion
