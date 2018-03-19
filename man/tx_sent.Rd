@@ -10,7 +10,7 @@ tx_sent(data, string, lexica = c("afinn"))
 \item{x}{A string vector}
 }
 \value{
-seq of vectorized character vectors as list\code{x}
+a sentiment vector
 }
 \description{
 tx_sent

@@ -1,11 +1,7 @@
 #' tx_sent
 #'
 #' @param x A string vector
-#' @return seq of vectorized character vectors as list\code{x}
-#' @example
-#'
-#' string <- c("hey how are you? are you fine?", "no im very sad an ill")
-#  dt <- tibble(text = string)
+#' @return a sentiment vector
 #'
 #' @export
 tx_sent <- function(data, string, lexica = c("afinn")){
@@ -56,3 +52,6 @@ tx_sent <- function(data, string, lexica = c("afinn")){
 
   return(cbind(data, sent))
 }
+
+# string <- c("hey how are you? are you fine?", "no im very sad an ill")
+#  dt <- tibble(text = string)
